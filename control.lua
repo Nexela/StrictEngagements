@@ -32,6 +32,7 @@ function globalVarInit()
 		quickgetaway=QUICKGETAWAY,
 		whitelist = MOD.whitelist,
 		playerData={},
+		turrettypes={"electric-turret", "ammo-turret"},
 		turretData={},
 	}
 end
@@ -128,9 +129,18 @@ function OnBuiltEntity(event)
 	canWeBuildIt(event)
 end
 
-script.on_event(defines.events.on_built_entity, function(event) OnBuiltEntity(event) end )   --event = {player_id, created_entity, name, tick}
-script.on_event(defines.events.on_robot_built_entity, function(event) OnBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
+function OnRobotBuiltEntity(event)
+	turretCoolDown(event.robot, event.entity)
+end
 
+function OnPutItem(event)
+	--doDebug("On Put Item Event")
+
+end
+
+script.on_event(defines.events.on_built_entity, function(event) OnBuiltEntity(event) end )   --event = {player_id, created_entity, name, tick}
+script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
+--script.on_event(defines.events.on_put_item, function(event) OnPutItem(event) end)
 
 ------------------------------------------------------------------------------------------
 --[[helpers]]--

@@ -2,59 +2,59 @@
 
 function canWeBuildIt(event)
 	if global.mode <= 1 then doDebug("mode is off: Exiting script") return end
-	local robot = event.robot
+
 	local player = game.players[event.player_index]
-	local builtby = robot or player
-	if not builtby then doDebug("builtby is not valid ending script for entity") return end
+	if not player then doDebug("player is not valid ending script for entity") return end
+
 	local entity = event.created_entity
+	local isTurret = table.ismember(entity.type, global.turrettypes)
+	local isWhitelist = table.ismember(entity.type, global.whitelist)
+	if global.mode <=2 and isTurret then --TODO Turrettypelist
+		doDebug("Mode 2 - Only Turrets are restricted!")
 
-	if global.mode <=2 and entity.type ~= "turret" then
-		doDebug("Mode 2 - Only Turrets are restricted! Exiting Script")
-	return end
+	elseif global.mode <=3 and isWhitelist then --TODO loop through allowed list, car, capsules, etc
+		if global.quickgetaway then quickGetAway() end
+		doDebug("Mode 3 - Allow building " ..entity.type.. " from whitelist")-- Allow building cars for quick getaways --TODO - quick getaway - autofill car with coal, config, autofill mod check.
 
-	if global.mode <=3 and table.ismember(entity.type, global.whitelist) then --TODO loop through allowed list, car, capsules, etc
-		if global.quickgetaway then end
-		doDebug("Mode 3 - Allow building " ..entity.type.. " from whitelist: Exiting Script")
-	return end -- Allow building cars for quick getaways --TODO - quick getaway - autofill car with coal, config, autofill mod check.
-
-	local spawnzone = atSpawn(entity.position, builtby)
-	local nearby = checkForEnemies(entity.position, builtby)
-	--local spawn=atSpawn(entity.position, player)
-	--local nearbyEnemies = checkForEnemies(entity.position, player)
-
-	--[[
-	if robot then
-		doDebug("Robot is building Entity")
-	elseif player then
-		doDebug("Player is building Entity")
 	else
-		doDebug("Entity built but something went wrong, Stopping script for this entity", true)
-		return  -- ERROR!, something went wrong here........
-	end
-	--]]
+		local spawnzone = atSpawn(entity.position, builtby)
+		local nearby = checkForEnemies(entity.position, builtby)
+		if not spawnzone then
+			if nearby then  --If we are not in the spawnzone and enemies are near
+					noWeCant(entity, player)
+					isTurret = false  --since we destroyed the entity there is no cake, or turret in this case
+					player.print("An enemy force is too close to permit building here")  --TODO Localize
+					doDebug("Player Built: An enemy force is too close to permit building")
+			else
+				doDebug("No Enemies found safe to build")
+				turretCoolDown(entity, player)
+			end -- nearby enemies
+		end-- not In spawnzone
+			doDebug("We are in the Spawnzone ")
 
-	if not spawnzone then
-		if nearby then  --If we are not in the spawnzone and enemies are near
-			if player then
-				player.print("An enemy force is too close to permit building here")  --TODO Localize
-				entity.destroy()
-				doDebug("Player Built: An enemy force is too close to permit building")
-			elseif robot then
-				Game.print_force("A robot is trying to build to close to enemies") --TODO localize
-				doDebug("Robot Built: An enemy force is to close to permit building")
-			else  --Neither player nor robot
-				doDebug("neither player nor robot build")
-			return end
-		else --No Enemies nearby
-			doDebug("No Enemies found safe to build")
-		end
-	else -- In spawnzone
-		doDebug("We are in the Spawnzone ")
-	return end
+	end -- main
+
+	if (not spawnzone or global.mode==4) and isTurret then
+		turretCoolDown(entity, player, spawnzone)
+	end
+
 end
 
+function quickGetAway()
+end
 
+function noWeCant(entity, player)
+	if entity.name ~= "entity-ghost" then
+		player.insert({name = entity.name, count = 1})
+		entity.destroy()
+	else
+		entity.destroy()
+	end
+return true end
 
+function turretCoolDown(entity, player, spawnzone) --player can be robot entity
+	if global.mode <= 1 then doDebug("mode is off: Exiting script") return end --check needed for robots.
+end
 
 function atSpawn(entpos, builtby)
 	local spawn = builtby.force.get_spawn_position(builtby.surface)

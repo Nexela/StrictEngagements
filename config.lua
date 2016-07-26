@@ -2,10 +2,10 @@
 --Changeing these settings will not affect an existing game unless you run /c remote.call("ntc", "reset")
 
 --Radius of tiles from spawn location to ignore building restrictions. Gives you a little bit of room in case biters move in fast.
-SPAWNDISTANCE = 20 --default: 400
+SPAWNDISTANCE = 10 --default: 400
 
 --Radius of tiles from enemy where stuff can't be built
-BUILDDISTANCE = 200  --default:100
+BUILDDISTANCE = 3000  --default:100
 
 --Limit mode for building restrictions
 --Available options are: off, easy, medium, hard
