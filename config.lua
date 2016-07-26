@@ -1,10 +1,11 @@
 --Config File
+--Changeing these settings will not affect an existing game unless you run /c remote.call("ntc", "reset")
 
 --Radius of tiles from spawn location to ignore building restrictions. Gives you a little bit of room in case biters move in fast.
 SPAWNDISTANCE = 20 --default: 400
 
 --Radius of tiles from enemy where stuff can't be built
-BUILDDISTANCE = 100  --default:100
+BUILDDISTANCE = 200  --default:100
 
 --Limit mode for building restrictions
 --Available options are: off, easy, medium, hard
@@ -15,9 +16,15 @@ BUILDDISTANCE = 100  --default:100
 MODE = 3 --default:3
 
 
---Will pull 1 coal out of thin air and put it in your car when crafted if there are enemies around. NOT IMPLEMENTED YET
+--Will pull 1 coal out of thin air and put it in your car when crafted if there are enemies around. TODO NOT IMPLEMENTED YET
 QUICKGETAWAY = false --default:false
+
+--Turret Cooldown, number of seconds before a placed turret will become active  set to 0 to disable cooldown. TODO Not implemented yet.
+COOLDOWN = 5 --default:5
 
 
 --Turn on detailed debugging
-DEBUG = true --default:false
+--0 = off
+--1 = on - only prints to logfile
+--2 = on - prints to logfile and player console
+DEBUG = 2--default:0

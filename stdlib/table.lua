@@ -197,3 +197,18 @@ function table.tostring( tbl )
   end
   return "{" .. table.concat( result, "," ) .. "}"
 end
+
+function table.ismember(value, tbl)
+	if tbl == nil or value == nil then return false end
+	if type(tbl) ~= "table" then
+		if tostring(value) == tostring (tbl) then
+			return true
+		else
+			return false
+		end
+	end
+	for k, v in ipairs(tbl) do
+		if v == value then return true end
+	end
+
+end
