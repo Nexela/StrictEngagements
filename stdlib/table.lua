@@ -161,6 +161,9 @@ function table.remove_keys(tbl, keys)
     return tbl
 end
 
+-----------------------------------------------------------------------------------
+--Additional Table Helpers
+
 function table.val_to_str ( v )
   if "string" == type( v ) then
     v = string.gsub( v, "\n", "\\n" )
@@ -198,6 +201,16 @@ function table.tostring( tbl )
   return "{" .. table.concat( result, "," ) .. "}"
 end
 
+function table.arraytostring(...)
+	local s = ""
+
+	for i, v in ipairs({...}) do
+		s = s .." " .. tostring(v)
+	end
+	return s
+end
+
+
 function table.ismember(value, tbl)
 	if tbl == nil or value == nil then return false end
 	if type(tbl) ~= "table" then
@@ -210,5 +223,5 @@ function table.ismember(value, tbl)
 	for k, v in ipairs(tbl) do
 		if v == value then return true end
 	end
-
+return false
 end

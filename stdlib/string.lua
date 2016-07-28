@@ -31,3 +31,7 @@ end
 function string.contains(s, ends)
    return s and string.find(s, ends) ~= nil
 end
+
+function string.middlepos(s)
+return math.abs(string.len(s)/2) or 0
+end

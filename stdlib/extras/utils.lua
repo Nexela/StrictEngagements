@@ -1,8 +1,5 @@
 -- utils.lua by binbinhfr, v1.0.10
 
--- define debug_status to 1 or nil in the control.lua, before statement require("utils")
--- define also debug_file and debug_mod_name
-
 colors = {
 	white = {r = 1, g = 1, b = 1},
 	black = {r = 0, g = 0, b = 0},
@@ -64,8 +61,7 @@ lightcolors = {
 }
 
 local author_name1 = "Nexela"
-local author_name2 = "binbin"
-
+local author_name2 = "Nexela"
 
 --------------------------------------------------------------------------------------
 --TODO Set goal for force
@@ -77,6 +73,7 @@ function SetGoalForAllPlayers( goalText )
 	end
 end
 
+--------------------------------------------------------------------------------------
 function PrettyNumber( number )
 	if number < 1000 then
 		return string.format("%i", number)
@@ -87,6 +84,7 @@ function PrettyNumber( number )
 	end
 end
 
+--------------------------------------------------------------------------------------
 function GetNearest( objects, point )
 	if #objects == 0 then
 		return nil
@@ -105,6 +103,7 @@ function GetNearest( objects, point )
 	return nearest
 end
 
+--------------------------------------------------------------------------------------
 function nearest_players( params )
     local origin = params.origin
     local max_distance = params.max_distance or 2
@@ -121,94 +120,32 @@ function nearest_players( params )
     return list
 end
 
-function doLog(msg, printplayers)
-    if not printplayers then printplayers = false end
-    if type(msg) ~= "string" then msg = serpent.dump(msg, {name="var", comment=false, sparse=false, sortkeys=true}) end
-	LOGGER.info.log(msg)
-	if MOD.debug then LOGGER.debugger.log(msg) end
-	if printplayers and game then Game.print_all(msg) end
-end
-
-function doDebug(msg, debuganyway)
-	if not debuganyway then debuganyway = false end
-	if MOD.debug or debuganyway then
-	--if type(msg) ~= "string" then msg = serpent.dump(msg, {name="var", comment=false, sparse=false, sortkeys=true}) end
-	if type(msg) ~= "string" then msg = "Table Block \n" .. serpent.block(msg, {name="global"}) end
-		LOGGER.debugger.log(msg)
-	if game then Game.print_all(msg) end
-	end
-end
-
-function toString(...)
-	local s = ""
-	
-	for i, v in ipairs({...}) do
-		s = s .. tostring(v)
-	end
-	return s
-end
-
-
---[[
-function doLog(msg, option)
-if MOD.log or option=true then end
-if MOD.debug or option=true then end
-if
-end
---]]
-
---[[
-function debug_active(...)
-	-- can be called everywhere, except in on_load where game is not existing
-	local s = ""
-	
-	for i, v in ipairs({...}) do
-		s = s .. tostring(v)
-	end
-
-	if s == "RAZ" then
-		game.remove_path(debug_file)
+--------------------------------------------------------------------------------------
+function doDebug(msg, alert)
+	level = global.loglevel or LOGLEVEL
+	if level == 0 and not alert  then
 		return
-	elseif s == "CLEAR" then
-		for _, player in pairs(game.players) do
-			if player.connected then player.clear_console() end
+	else
+		level = 1
+		alert=true
+	end
+	if level >= 1 then MOD.logfile.log(table.tostring(msg)) end
+	if level >= 2 or alert then Game.print_all(MOD.n .. ":" .. table.tostring(msg)) end
+end
+
+--------------------------------------------------------------------------------------
+function flyingText(line, color, pos, surface)
+    color = color or colors.RED
+    if not pos then
+		for _, p in pairs(game.players) do
+			p.surface.create_entity({name="flying-text", position=p.position, text=line, color=color})
+        end
+    return
+    else
+		if surface then
+			surface.create_entity({name="flying-text", position=pos, text=line, color=color})
 		end
-		return
-	end
-
-	s = debug_mod_name .. "(" .. game.tick .. "): " .. s
-	game.write_file( debug_file, s .. "\n", true )
-	
-	for _, player in pairs(game.players) do
-		if player.connected then player.print(s) end
-	end
-end
-
-if debug_status == 1 then debug_print = debug_active else debug_print = function() end end
-
---------------------------------------------------------------------------------------
-function square_area( origin, radius )
-	return {
-		{x=origin.x - radius, y=origin.y - radius},
-		{x=origin.x + radius, y=origin.y + radius}
-	}
-end
-
---------------------------------------------------------------------------------------
-function distance( pos1, pos2 )
-	local dx = pos2.x - pos1.x
-	local dy = pos2.y - pos1.y
-	return( math.sqrt(dx*dx+dy*dy) )
-end
-
---------------------------------------------------------------------------------------
-function distance_square( pos1, pos2 )
-	return( max(math.abs(pos2.x - pos1.x),math.abs(pos2.y - pos1.y)) )
-end
-
---------------------------------------------------------------------------------------
-function pos_offset( pos, offset )
-	return { x=pos.x + offset.x, y=pos.y + offset.y }
+    end
 end
 
 --------------------------------------------------------------------------------------
@@ -277,8 +214,9 @@ function is_dev(player)
 end
 
 --------------------------------------------------------------------------------------
+--[[
 function dupli_proto( type, name1, name2, adaptMiningResult )
-	if data.raw[type][name1] then 
+	if data.raw[type][name1] then
 		local proto = table.deepcopy(data.raw[type][name1])
 		proto.name = name2
 		if adaptMiningResult then
@@ -292,6 +230,7 @@ function dupli_proto( type, name1, name2, adaptMiningResult )
 		return(nil)
 	end
 end
+--]]
 
 --------------------------------------------------------------------------------------
 function extract_monolith(filename, x, y, w, h)
@@ -313,4 +252,3 @@ function extract_monolith(filename, x, y, w, h)
 		},
 	}
 end
---]]

@@ -1,44 +1,38 @@
 --Control File
-require("config")
-require("ntc")
-require("stdlib/area/area")
-require("stdlib/game")
-require("stdlib/table")
-
-
 MOD = {
 	name = "NoTurretCreep",
 	n = "ntc",
 	modes = {"off","easy","medium","hard"},
-	whitelist = {"car"},
+	logfile = {},
 }
 
+require("config")
+require("util")
+require("stdlib/extras/utils")
+require("stdlib/area/area")
+require("stdlib/game")
+require("stdlib/string")
+require("stdlib/surface")
+require("stdlib/table")
+ntc = require("noturretcreep")
+tcd = require("turretcooldown")
+Logger = require("stdlib/log/logger")
 
-if DEBUG then
-	require("stdlib/log/logger")
-	_log = Logger.new(MOD.name, "debug", true, {log_ticks = true})
-	else
-	_log = function() end
-end
+MOD.logfile = Logger.new(MOD.name, "info", true, {log_ticks = true})
+
 
 
 ------------------------------------------------------------------------------------------
 --[[INIT FUNCTIONS]]--
-function globalVarInit()
+local function globalVarInit()
 	global = {
-		mode=getOrsetMode(MODE),
-		spawndistance=SPAWNDISTANCE,
-		builddistance=BUILDDISTANCE,
-		quickgetaway=QUICKGETAWAY,
-		whitelist = MOD.whitelist,
-		playerData={},
-		turrettypes={"electric-turret", "ammo-turret"},
-		turretData={},
+		loglevel=LOGLEVEL or 0
 	}
 end
 
 
 local function playerInit(reset)
+ if reset or not global.playerData then global.playerData = {} end
 	for _, player in pairs(game.players) do
 		newPlayerInit(player, reset)
 		doDebug("playerInit: New Player Added")
@@ -46,7 +40,7 @@ local function playerInit(reset)
 end
 
 
-function newPlayerInit(player, reset)	-- initialize or update per player globals of the mod
+local function newPlayerInit(player, reset)	-- initialize or update per player globals of the mod
 	if global.playerData == nil then global.playerData = {} end
 	if reset == true or global.playerData[player.index] == nil then
 		global.playerData[player.index] = {
@@ -59,8 +53,10 @@ end
 
 local function OnGameInit() --Called when mod is first added to a new game
     doDebug("OnGameInit: Initial Setup Started")
-    globalVarInit() -- Populate main player variables
+    globalVarInit() -- clear global and initialize
     playerInit() -- Initialize all players, No players here during on Init of new game.
+    ntc.init()
+    tcd.init()
    	doDebug("OnGameInit: Initial Setup Complete")
    log(MOD.name ..": Finished Initializing")
 end
@@ -125,15 +121,19 @@ script.on_event(defines.events.on_player_left_game, function(event) OnPlayerLeft
 
 ------------------------------------------------------------------------------------------
 --[[ENTITY FUNCTIONS]]--
-function OnBuiltEntity(event)
-	canWeBuildIt(event)
+local function OnBuiltEntity(event)
+	ntc.OnBuiltEntity(event)
 end
 
 function OnRobotBuiltEntity(event)
-	turretCoolDown(event.robot, event.entity)
+	local isTurret = table.ismember(entity.name, global.turrets) or table.ismember(entity.type, global.turrets)
+	if global.cooldown > 0 and isTurret then
+		--turretCoolDown(event.entity, event.robot, true)
+		doDebug("A Robot built from turretlist")
+	end -- turretCoolDown
 end
 
-function OnPutItem(event)
+local function OnPutItem(event)
 	--doDebug("On Put Item Event")
 
 end
@@ -142,34 +142,33 @@ script.on_event(defines.events.on_built_entity, function(event) OnBuiltEntity(ev
 script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
 --script.on_event(defines.events.on_put_item, function(event) OnPutItem(event) end)
 
+
 ------------------------------------------------------------------------------------------
---[[helpers]]--
-function doDebug(msg, alert)
-	if DEBUG >= 1 or alert then
-		_log.log(table.tostring(msg))
-		if DEBUG >= 2 or alert then
-			Game.print_all(MOD.n .. ":" .. table.tostring(msg))
-		end
-	end
-end
+--[[HELPERS]]--
+
 
 
 ------------------------------------------------------------------------------------------
 --[[REMOTE INTERFACES]]--
 local interface = {}
 
-
 function interface.printGlob(name)
 	if name then
         doDebug(global[name], true)
+        MOD.logfile.log(serpent.block(global[name]))
     else
         doDebug(global, true)
+        MOD.logfile.log(serpent.block(global))
     end
 end
 
 
 function interface.mode(mode)
-	global.mode=getOrsetMode(mode)
+	global.mode=ntc.getOrsetMode(mode)
+end
+
+function interface.loglevel(lvl)
+	global.loglevel=lvl
 end
 
 
