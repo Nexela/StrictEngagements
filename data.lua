@@ -6,7 +6,7 @@ data:extend({
 		animations =
 		{
 			{
-				filename = "__StrictEngagement__/graphics/null.png",
+				filename = "__StrictEngagements__/graphics/null.png",
 				priority = "low",
 				width = 32,
 				height = 32,
@@ -19,7 +19,7 @@ data:extend({
 		sound =
 		{
 		  {
-			filename = "__StrictEngagement__/sounds/cannot-build.ogg",
+			filename = "__StrictEngagements__/sounds/cannot-build.ogg",
 			volume = 0.99
 		  },
 		},

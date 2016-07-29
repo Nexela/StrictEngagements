@@ -1,6 +1,6 @@
 --Control File
 MOD = {
-	name = "StrictEngagement",
+	name = "StrictEngagements",
 	n = "se",
 	modes = {"off","easy","medium","hard"},
 	logfile = {},
@@ -14,7 +14,7 @@ require("stdlib/game")
 require("stdlib/string")
 require("stdlib/surface")
 require("stdlib/table")
-ntc = require("StrictEngagement")
+ntc = require("noturretcreep")
 tcd = require("turretcooldown")
 Logger = require("stdlib/log/logger")
 

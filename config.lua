@@ -13,13 +13,13 @@ BUILDDISTANCE = 100  --default:100
 --2 = easy - Only limits building of turret type entites when in range of enemies
 --3 = medium - Can only build cars/tanks when in the range of an enemy
 --4 = hard -  No Building of ANY entity when in the range of an enemy, this includes cars, hope you can run FAST!
-MODE = 3 --default:3
+MODE = 2 --default:2
 
 
 --Will pull 1 coal out of your inventory and stick it in your car when building cars near enemies.
 QUICKGETAWAY = true --default:true
 -- Will pull 1 coal out of thin air if you don't have any in your inventory.
-QUICKGETAWAYCHEAT = true --default:false
+QUICKGETAWAYCHEAT = false --default:false
 --Temorarily disable autofill mod when building vehichles when using QUICKGETAWAY only works with autofill >= 1.4.2
 QUICKGETAWAYNOAUTOFILL = true --default:true
 
@@ -32,7 +32,7 @@ COOLDOWN = 10 --default:10
 --0 = off - Not recomended
 --1 = on - Prints to log
 --2 = on - Prints to log and Player
-LOGLEVEL = 2--default:0
+LOGLEVEL = 0--default:0
 
 -----------------------------------------------------------------------------------------
 --Allowed name and types can be built regardless of proximity to enemies as long as mode is not 4.

@@ -1,4 +1,4 @@
-# StrictEngagement
+# Strict Engagements
 
 ##ALPHA - Make sure to backup your saves!
 
