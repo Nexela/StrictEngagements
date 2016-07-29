@@ -23,7 +23,7 @@ You don't even have time to load ammo because you are trying to get away fast!  
 Coming soon(tm)
 
 * Turret Cooldown - Turrets will have a cooldown period before the become active, this can used seperatly from the Turret creep portion
-* Victory Poles! - But not the cheasy kind, you will need to defend these, using these poles will extend the safe to build zone so even if biters move in nearby you won't be
+* Expansion Poles! - But not the cheesy victory kind, you will need to defend these, using these poles will only extend the safe to build zone so even if biters move in nearby you can still build walls and such!
 punished.
 
 ####Known Issues
