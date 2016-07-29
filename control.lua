@@ -1,7 +1,7 @@
 --Control File
 MOD = {
-	name = "NoTurretCreep",
-	n = "ntc",
+	name = "StrictEngagement",
+	n = "se",
 	modes = {"off","easy","medium","hard"},
 	logfile = {},
 }
@@ -14,7 +14,7 @@ require("stdlib/game")
 require("stdlib/string")
 require("stdlib/surface")
 require("stdlib/table")
-ntc = require("noturretcreep")
+ntc = require("StrictEngagement")
 tcd = require("turretcooldown")
 Logger = require("stdlib/log/logger")
 
@@ -144,8 +144,17 @@ script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBui
 
 
 ------------------------------------------------------------------------------------------
---[[HELPERS]]--
+--[[TICK FUNCTIONS]]--
+function OnTick(event)
+	--raiseEvents(event)
+	if event.tick % 10 == 0 then
 
+	end -- Every 20 ticks...
+end
+script.on_event(defines.events.on_tick, OnTick)
+
+------------------------------------------------------------------------------------------
+--[[HELPERS]]--
 
 
 ------------------------------------------------------------------------------------------

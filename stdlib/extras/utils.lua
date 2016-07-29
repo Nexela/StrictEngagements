@@ -136,6 +136,7 @@ end
 --------------------------------------------------------------------------------------
 function flyingText(line, color, pos, surface)
     color = color or colors.RED
+    line = line or "missing text" --If we for some reason didn't pass a message make a message
     if not pos then
 		for _, p in pairs(game.players) do
 			p.surface.create_entity({name="flying-text", position=p.position, text=line, color=color})
@@ -251,4 +252,64 @@ function extract_monolith(filename, x, y, w, h)
 			y = y,
 		},
 	}
+end
+
+-----------------------------------------------------------------------------------
+--Additional Table Helpers
+
+function table.val_to_str ( v )
+  if "string" == type( v ) then
+    v = string.gsub( v, "\n", "\\n" )
+    if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
+      return "'" .. v .. "'"
+    end
+    return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
+  else
+    return "table" == type( v ) and table.tostring( v ) or
+      tostring( v )
+  end
+end
+
+function table.key_to_str ( k )
+  if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
+    return k
+  else
+    return "[" .. table.val_to_str( k ) .. "]"
+  end
+end
+
+function table.tostring( tbl )
+	if type(tbl) ~= "table" then return tostring(tbl) end
+  local result, done = {}, {}
+  for k, v in ipairs( tbl ) do
+    table.insert( result, table.val_to_str( v ) )
+    done[ k ] = true
+  end
+  for k, v in pairs( tbl ) do
+    if not done[ k ] then
+      table.insert( result,
+        table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
+    end
+  end
+  return "{" .. table.concat( result, "," ) .. "}"
+end
+
+function table.arraytostring(...)
+	local s = ""
+
+	for i, v in ipairs({...}) do
+		s = s .." " .. tostring(v)
+	end
+	return s
+end
+
+function table.getvalue(value, tbl)
+	if tbl==nil or value == nil then return nil end
+	if type(tbl) ~= "table" then
+		if tostring(value) == tostring(tbl) then return value else return nil end
+	end
+	for k, v in ipairs(tbl) do
+		if v == value then return v end
+	end
+	return nil
 end

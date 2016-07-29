@@ -2,10 +2,10 @@
 --Changeing these settings will not affect an existing game unless you run /c remote.call("ntc", "reset")
 
 --Radius of tiles from spawn location to ignore building restrictions. Gives you a little bit of room in case biters move in fast.
-SPAWNAREA = 20 --default: 400
+SPAWNAREA = 200 --default: 200
 
---Radius of tiles to enemy where stuff can't be built
-BUILDDISTANCE = 3000  --default:100
+--Radius of tiles to enemy where stuff can't be built only checks in loaded chunks
+BUILDDISTANCE = 100  --default:100
 
 --Limit mode for building restrictions
 --Available options are: off, easy, medium, hard
@@ -16,11 +16,13 @@ BUILDDISTANCE = 3000  --default:100
 MODE = 3 --default:3
 
 
---Will pull 1 coal out of thin air and put it in your car when crafted if there are enemies around. TODO NOT IMPLEMENTED YET
-QUICKGETAWAY = true --default:false
+--Will pull 1 coal out of your inventory and stick it in your car when building cars near enemies.
+QUICKGETAWAY = true --default:true
+-- Will pull 1 coal out of thin air if you don't have any in your inventory.
+QUICKGETAWAYCHEAT = true --default:false
+--Temorarily disable autofill mod when building vehichles when using QUICKGETAWAY only works with autofill >= 1.4.2
+QUICKGETAWAYNOAUTOFILL = true --default:true
 
---Disable autofilll when building vehichles in the danger zone?
-NOAUTOFILLMOD = false --default:true
 
 --Turret Cooldown, number of seconds before a placed turret will become active  set to 0 to disable cooldown. TODO Not implemented yet. TODO - Technology to lower the time?
 COOLDOWN = 10 --default:10
@@ -38,7 +40,7 @@ LOGLEVEL = 2--default:0
 --Allowed can be either an item type (catergory) or an item name.
 --In the event that an items name and type are defined the name will be checked first.
 --Do not put turrets in this table use TURRETS for those.
-ALLOWED = {"car"}
+ALLOWED = {"car", "land-mine", "combat-robot"}
 
 --Turret Types. To allow turrets of a certain type or name add them to the following list.
 TURRETS = {"electric-turret", "ammo-turret"}
