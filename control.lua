@@ -1,4 +1,6 @@
 --Control File
+--luacheck: globals global game script defines MOD Logger log
+--luacheck: globals LOGLEVEL 
 MOD = {
 	name = "StrictEngagements",
 	n = "se",
@@ -14,8 +16,8 @@ require("stdlib/game")
 require("stdlib/string")
 require("stdlib/surface")
 require("stdlib/table")
-ntc = require("noturretcreep")
-tcd = require("turretcooldown")
+local ntc = require("noturretcreep")
+local tcd = require("turretcooldown")
 Logger = require("stdlib/log/logger")
 
 MOD.logfile = Logger.new(MOD.name, "info", true, {log_ticks = true})
