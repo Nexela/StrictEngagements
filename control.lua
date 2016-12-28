@@ -1,6 +1,6 @@
 --Control File
 --luacheck: globals global game script defines MOD Logger log
---luacheck: globals LOGLEVEL 
+--luacheck: globals LOGLEVEL
 MOD = {
 	name = "StrictEngagements",
 	n = "se",
@@ -78,11 +78,6 @@ local function OnGameChanged(data)--Called whenever Game Version or any mod Vers
 end
 
 
-script.on_init(OnGameInit)
-script.on_load(OnPlayerCreated)
-script.on_configuration_changed(OnGameGhanged)
-
-
 ------------------------------------------------------------------------------------------
 --[[PLAYER FUNCTIONS]]--
 local function OnPlayerCreated(event)--Called Everytime a new player is created
@@ -125,10 +120,11 @@ local function OnBuiltEntity(event)
 end
 
 function OnRobotBuiltEntity(event)
+	local entity = event.entity
 	local isTurret = table.ismember(entity.name, global.turrets) or table.ismember(entity.type, global.turrets)
 	if global.cooldown > 0 and isTurret then
 		--turretCoolDown(event.entity, event.robot, true)
-		doDebug("A Robot built from turretlist")
+		--doDebug("A Robot built from turretlist")
 	end -- turretCoolDown
 end
 
@@ -138,7 +134,7 @@ local function OnPutItem(event)
 end
 
 script.on_event(defines.events.on_built_entity, function(event) OnBuiltEntity(event) end )   --event = {player_id, created_entity, name, tick}
-script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
+--script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
 --script.on_event(defines.events.on_put_item, function(event) OnPutItem(event) end)
 
 
@@ -148,9 +144,12 @@ function OnTick(event)
 	--raiseEvents(event)
 	if event.tick % 10 == 0 then
 
-	end -- Every 20 ticks...
+	end -- Every 10 ticks...
 end
-script.on_event(defines.events.on_tick, OnTick)
+--script.on_event(defines.events.on_tick, OnTick)
+script.on_init(OnGameInit)
+script.on_load(OnPlayerCreated)
+script.on_configuration_changed(OnGameChanged)
 
 ------------------------------------------------------------------------------------------
 --[[HELPERS]]--
