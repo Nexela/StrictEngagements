@@ -32,16 +32,6 @@ local function globalVarInit()
 	}
 end
 
-
-local function playerInit(reset)
- if reset or not global.playerData then global.playerData = {} end
-	for _, player in pairs(game.players) do
-		newPlayerInit(player, reset)
-		doDebug("playerInit: New Player Added")
-	end
-end
-
-
 local function newPlayerInit(player, reset)	-- initialize or update per player globals of the mod
 	if global.playerData == nil then global.playerData = {} end
 	if reset == true or global.playerData[player.index] == nil then
@@ -52,6 +42,13 @@ local function newPlayerInit(player, reset)	-- initialize or update per player g
 	end
 end
 
+local function playerInit(reset)
+ if reset or not global.playerData then global.playerData = {} end
+	for _, player in pairs(game.players) do
+		newPlayerInit(player, reset)
+		doDebug("playerInit: New Player Added")
+	end
+end
 
 local function OnGameInit() --Called when mod is first added to a new game
     doDebug("OnGameInit: Initial Setup Started")
