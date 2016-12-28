@@ -1,6 +1,6 @@
 --Control File
 --luacheck: globals global game script defines MOD Logger log
---luacheck: globals LOGLEVEL 
+--luacheck: globals LOGLEVEL
 MOD = {
 	name = "StrictEngagements",
 	n = "se",
@@ -32,16 +32,6 @@ local function globalVarInit()
 	}
 end
 
-
-local function playerInit(reset)
- if reset or not global.playerData then global.playerData = {} end
-	for _, player in pairs(game.players) do
-		newPlayerInit(player, reset)
-		doDebug("playerInit: New Player Added")
-	end
-end
-
-
 local function newPlayerInit(player, reset)	-- initialize or update per player globals of the mod
 	if global.playerData == nil then global.playerData = {} end
 	if reset == true or global.playerData[player.index] == nil then
@@ -52,6 +42,13 @@ local function newPlayerInit(player, reset)	-- initialize or update per player g
 	end
 end
 
+local function playerInit(reset)
+ if reset or not global.playerData then global.playerData = {} end
+	for _, player in pairs(game.players) do
+		newPlayerInit(player, reset)
+		doDebug("playerInit: New Player Added")
+	end
+end
 
 local function OnGameInit() --Called when mod is first added to a new game
     doDebug("OnGameInit: Initial Setup Started")
@@ -79,11 +76,6 @@ local function OnGameChanged(data)--Called whenever Game Version or any mod Vers
 		end
 	end
 end
-
-
-script.on_init(OnGameInit)
-script.on_load(OnPlayerCreated)
-script.on_configuration_changed(OnGameGhanged)
 
 
 ------------------------------------------------------------------------------------------
@@ -128,10 +120,11 @@ local function OnBuiltEntity(event)
 end
 
 function OnRobotBuiltEntity(event)
+	local entity = event.entity
 	local isTurret = table.ismember(entity.name, global.turrets) or table.ismember(entity.type, global.turrets)
 	if global.cooldown > 0 and isTurret then
 		--turretCoolDown(event.entity, event.robot, true)
-		doDebug("A Robot built from turretlist")
+		--doDebug("A Robot built from turretlist")
 	end -- turretCoolDown
 end
 
@@ -141,7 +134,7 @@ local function OnPutItem(event)
 end
 
 script.on_event(defines.events.on_built_entity, function(event) OnBuiltEntity(event) end )   --event = {player_id, created_entity, name, tick}
-script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
+--script.on_event(defines.events.on_robot_built_entity, function(event) OnRobotBuiltEntity(event) end ) --event = {robot, created_entity, name, tick}
 --script.on_event(defines.events.on_put_item, function(event) OnPutItem(event) end)
 
 
@@ -151,9 +144,12 @@ function OnTick(event)
 	--raiseEvents(event)
 	if event.tick % 10 == 0 then
 
-	end -- Every 20 ticks...
+	end -- Every 10 ticks...
 end
-script.on_event(defines.events.on_tick, OnTick)
+--script.on_event(defines.events.on_tick, OnTick)
+script.on_init(OnGameInit)
+script.on_load(OnPlayerCreated)
+script.on_configuration_changed(OnGameChanged)
 
 ------------------------------------------------------------------------------------------
 --[[HELPERS]]--
