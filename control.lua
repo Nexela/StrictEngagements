@@ -8,14 +8,9 @@ MOD = {
 }
 
 require("config")
-require("stdlib/extras/utils")
-require("stdlib/area/area")
-require("stdlib/game")
-require("stdlib/string")
-require("stdlib/surface")
-require("stdlib/table")
+require("stdlib/extras/utils") --Main STDLIB includes all Top level Globals
 local ntc = require("noturretcreep")
-local tcd = require("turretcooldown")
+--local tcd = require("turretcooldown") -- No point including this yet.
 Logger = require("stdlib/log/logger")
 
 MOD.logfile = Logger.new(MOD.name, "info", true, {log_ticks = true})
@@ -67,7 +62,7 @@ local function OnGameInit() --Called when mod is first added to a new game
   globalVarInit() -- clear global and initialize
   playerInit() -- Initialize all players, No players here during on Init of new game.
   ntc.init()
-  tcd.init()
+  --tcd.init()
   doDebug("OnGameInit: Initial Setup Complete")
   log(MOD.name ..": Finished Initializing")
 end
