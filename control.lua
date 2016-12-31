@@ -1,26 +1,31 @@
 --Control File
---luacheck: globals LOGLEVEL
-MOD = {
-  name = "StrictEngagements",
-  n = "se",
-  modes = {"off","easy","medium","hard"},
-  logfile = {},
-}
 
-require("config")
-require("stdlib/extras/utils") --Main STDLIB includes all Top level Globals
+--Require Config Settings
+local SE = require("config")
+
+--require Logger and Config libraries
+require("stdlib.log.logger")
+require("stdlib.config.config")
+
+MOD = {}
+MOD.name = "StrictEngagements"
+MOD.IF = "se"
+MOD.modes = {"off","easy","medium","hard"}
+MOD.logfile = Logger.new(MOD.name, "info", true, {log_ticks = true})
+MOD.config = Config.new(SE) --Store in Mod global until we can switch to "global"
+
+require("stdlib/utils/debug")
+require("stdlib/utils/utils") --Main STDLIB includes all Top level Globals
+
 local ntc = require("noturretcreep")
 --local tcd = require("turretcooldown") -- No point including this yet.
-Logger = require("stdlib/log/logger")
 
-MOD.logfile = Logger.new(MOD.name, "info", true, {log_ticks = true})
 
 ------------------------------------------------------------------------------------------
 --[[HELPER FUNCTIONS]]--
 local function globalVarInit()
-  global = {
-    loglevel=LOGLEVEL or 0
-  }
+  global.config = SE
+  MOD.config = Config.new(global.config) -- We have global init, move config handler to global config
 end
 
 local function newPlayerInit(player, reset) -- initialize or update per player globals of the mod
@@ -56,6 +61,11 @@ local function OnPlayerCreated(event)--Called Everytime a new player is created
   newPlayerInit(player)
 end
 script.on_event(defines.events.on_player_created, function(event) OnPlayerCreated(event) end)
+
+local function OnLoad()
+  MOD.config = Config.new(global.config) -- We have global init, move config handler to global config
+end
+script.on_load(OnLoad)
 
 local function OnGameInit() --Called when mod is first added to a new game
   doDebug("OnGameInit: Initial Setup Started")
@@ -106,4 +116,4 @@ function interface.reset()
   OnGameInit()
 end
 
-remote.add_interface(MOD.n, interface)
+remote.add_interface(MOD.IF, interface)

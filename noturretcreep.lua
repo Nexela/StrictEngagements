@@ -1,5 +1,5 @@
 --NoTurretCreep Main functions
---luacheck: ignore MODE SPAWNAREA BUILDDISTANCE QUICKGETAWAY QUICKGETAWAYNOAUTOFILL QUICKGETAWAYCHEAT ALLOWED TURRETS
+local SE = require("config")
 local ntc = {}
 local Area = require ("stdlib/area/area")
 local Position = require("stdlib/area/position")
@@ -7,26 +7,28 @@ local Position = require("stdlib/area/position")
 --Init the NTC data
 function ntc.init()
   --Init the no turret creep module with config values or default values
-    global.mode = ntc.getOrsetMode(MODE)
-    global.spawnarea = SPAWNAREA or 200
-    global.builddistance = BUILDDISTANCE or 100
-    global.quickgetaway = QUICKGETAWAY or true
-    global.quickgetawaynoautofill = QUICKGETAWAYNOAUTOFILL or true
-    global.quickgetawaycheat = QUICKGETAWAYCHEAT or false
-    global.allowed = ALLOWED or {"car"}
-    global.turrets = TURRETS or {"electric-turret", "ammo-turret"}
+    global.mode = ntc.getOrsetMode(SE.MODE)
+    global.spawnarea = SE.SPAWNAREA or 200
+    global.builddistance = SE.BUILDDISTANCE or 100
+    global.quickgetaway = SE.QUICKGETAWAY or true
+    global.quickgetawaynoautofill = SE.QUICKGETAWAYNOAUTOFILL or true
+    global.quickgetawaycheat = SE.QUICKGETAWAYCHEAT or false
+    global.allowed = SE.ALLOWED or {"car"}
+    global.turrets = SE.TURRETS or {"electric-turret", "ammo-turret"}
 end
 
 -------------------------------------------------------------------------------
 --[[Helpers]]--
 
---TODO: Switch to table.any?
+local function _get_match(v, _, name, type)
+  if v == name or v == type then return true end
+end
 local function checkLists(entity, list)
-  --list=global[list]
   if not list or not entity then return false end
-  if entity.name == "entity-ghost" then return table.getvalue(entity.ghost_name, list) or table.getvalue(entity.ghost_type, list) or false
+  if entity.name == "entity-ghost" then
+    return table.any(list, _get_match, entity.ghost_name, entity.ghost_type) or false
   else
-    return table.getvalue(entity.name, list) or table.getvalue(entity.type, list) or false
+    return table.any(list, _get_match, entity.name, entity.type) or false
   end
 end
 
@@ -51,7 +53,7 @@ end
 
 --Lets get away quickly
 function ntc.quickGetAway(entity, player)
-  if global.quickgetaway and entity.type == "car" and ntc.nearbyEnemies(entity, entity.position, 200) then
+  if global.quickgetaway and entity.type == "car" and getNearbyEnemies(entity, entity.position, 200) then
 
     local pos = Position.offset(entity.position, -1, 0)
     local locstring
@@ -75,7 +77,7 @@ function ntc.quickGetAway(entity, player)
 
 		if cnt < 1 then cnt=1 end
     entity.insert({name="coal", count=cnt})
-    _G.flyingText(locstring, clr, pos, entity.surface, 10)
+    _G.flying_text(locstring, clr, pos, entity.surface, 10)
   else
     doDebug("QuickGetaway: Disabled, or not car, or no enemies nearby")
   end
@@ -87,7 +89,6 @@ function ntc.isCreeping(entity, builtby, isTurret)
 
   if mode <= 1 then doDebug("Mode is 1: exiting check for creep") return false end -- Mode is off who cares if we are creeping?
 
-  --local isAllowed = table.getvalue(entity.name, global.allowed) or table.getvalue(entity.type, global.allowed)
   local isAllowed = checkLists(entity, global.allowed)
   if mode == 2 and not isTurret then --return false if type is not turret and mode is 2
     doDebug("Mode 2 - Only Turrets restricted!")
@@ -123,7 +124,7 @@ function ntc.weAreCreeping(entity,player)
   end
 
   entity.surface.create_entity({name = "ntc-cannot-build", position = pos})
-  _G.flyingText({"ntc.to-close"}, defines.colors.red, pos, player.surface)
+  _G.flying_text({"ntc.to-close"}, defines.colors.red, pos, player.surface)
   entity.destroy()
   --player.print({"ntc.to-close"})
   doDebug("An enemy force is too close to permit building here")
@@ -139,7 +140,7 @@ function ntc.OnBuiltEntity(event)
     global.playerData[player.index].autofilltoggled = remote.call("af", "setUsage", player.name, "true")
   end
 
-  local isTurret = checkLists(entity, global.turrets) or false
+  local isTurret = checkLists(entity, global.turrets)
   if ntc.isCreeping(entity, player, isTurret) then ntc.weAreCreeping(entity, player) end
   --if isTurret then tcd.turretCoolDown() end
 end
