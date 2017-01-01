@@ -33,7 +33,7 @@ SE.COOLDOWN = 10 --default:10
 --0 = off - Not recomended
 --1 = on - Prints to log
 --2 = on - Prints to log and Player
-SE.LOGLEVEL = 2--default:0
+SE.LOGLEVEL = 0--default:0
 
 -----------------------------------------------------------------------------------------
 --Allowed name and types can be built regardless of proximity to enemies as long as mode is not 4.
